@@ -68,13 +68,13 @@ export default function Profile() {
               <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,_rgba(244,162,97,0.32),_transparent_32%)]" />
             </div>
 
-            <div className="p-5 pt-0 sm:p-6 sm:pt-0">
+            <div className="p-5 pt-3 sm:p-6 sm:pt-3">
               <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
                 <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:gap-4">
                   <img
                     src={user?.avatar || 'https://i.pravatar.cc/150?img=33'}
                     alt="Avatar"
-                    className="-mt-12 h-24 w-24 rounded-2xl border-4 border-white bg-white object-cover shadow-lg"
+                    className="-mt-8 h-24 w-24 rounded-2xl border-4 border-white bg-white object-cover shadow-lg"
                   />
                   <div className="pb-1">
                     <h2 className="text-2xl font-bold text-gray-950">{displayName}</h2>
