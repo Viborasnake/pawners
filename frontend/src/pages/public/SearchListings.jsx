@@ -7,6 +7,14 @@ export default function SearchListings() {
   const [searchTerm, setSearchTerm] = useState(searchParams.get('q') || '');
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [service, setService] = useState('Todos los servicios');
+  const [quickFilters, setQuickFilters] = useState({
+    availableToday: false,
+    cats: false,
+    patio: false,
+    featured: false,
+  });
+  const [maxPrice, setMaxPrice] = useState(20000);
+  const [minRating, setMinRating] = useState(0);
   const wrapperRef = useRef(null);
 
   const COMUNAS = [
@@ -286,14 +294,51 @@ export default function SearchListings() {
   }, []);
 
   const suggestions = COMUNAS.filter(c => c.toLowerCase().includes(searchTerm.toLowerCase()));
+  const availableTodayIds = [1, 2, 4, 5, 7, 8, 10, 12, 15];
+  const activeFilterCount = Object.values(quickFilters).filter(Boolean).length
+    + (maxPrice < 20000 ? 1 : 0)
+    + (minRating > 0 ? 1 : 0)
+    + (service !== 'Todos los servicios' ? 1 : 0);
+
+  const toggleQuickFilter = (key) => {
+    setQuickFilters((current) => ({
+      ...current,
+      [key]: !current[key],
+    }));
+  };
+
+  const resetFilters = () => {
+    setQuickFilters({
+      availableToday: false,
+      cats: false,
+      patio: false,
+      featured: false,
+    });
+    setMaxPrice(20000);
+    setMinRating(0);
+    setService('Todos los servicios');
+  };
 
   const serviceListings = listings.filter(listing =>
     service === 'Todos los servicios' || listing.services.includes(service)
   );
-  const hasLocationMatches = !searchTerm || serviceListings.some(listing =>
+  const filteredListings = serviceListings.filter((listing) => {
+    const acceptsCats = listing.services.includes('Gatos');
+    const hasPatio = listing.services.includes('Casa con patio')
+      || listing.title.toLowerCase().includes('patio')
+      || listing.description.toLowerCase().includes('patio');
+
+    return listing.price <= maxPrice
+      && listing.rating >= minRating
+      && (!quickFilters.availableToday || availableTodayIds.includes(listing.id))
+      && (!quickFilters.cats || acceptsCats)
+      && (!quickFilters.patio || hasPatio)
+      && (!quickFilters.featured || listing.featured);
+  });
+  const hasLocationMatches = !searchTerm || filteredListings.some(listing =>
     listing.comuna.toLowerCase().includes(searchTerm.toLowerCase())
   );
-  const visibleListings = [...serviceListings].sort((a, b) => {
+  const visibleListings = [...filteredListings].sort((a, b) => {
     const aMatches = searchTerm && a.comuna.toLowerCase().includes(searchTerm.toLowerCase());
     const bMatches = searchTerm && b.comuna.toLowerCase().includes(searchTerm.toLowerCase());
 
@@ -397,23 +442,102 @@ export default function SearchListings() {
 
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8">
         <div className="grid gap-6 lg:grid-cols-[260px_1fr]">
-          <aside className="hidden lg:block">
-            <div className="sticky top-24 rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
-              <div className="flex items-center gap-2 text-gray-950 font-bold mb-4">
-                <Filter size={18} className="text-primary-dark" />
-                Filtros rápidos
+          <aside className="lg:block">
+            <div className="lg:sticky lg:top-24 rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
+              <div className="mb-4 flex items-start justify-between gap-3">
+                <div>
+                  <div className="flex items-center gap-2 font-bold text-gray-950">
+                    <Filter size={18} className="text-primary-dark" />
+                    Filtros
+                  </div>
+                  <p className="mt-1 text-xs font-medium text-gray-500">
+                    {visibleListings.length} de {listings.length} cuidadores
+                  </p>
+                </div>
+                {activeFilterCount > 0 && (
+                  <button
+                    type="button"
+                    onClick={resetFilters}
+                    className="rounded-full bg-gray-100 px-3 py-1 text-xs font-bold text-gray-600 transition hover:bg-primary-light hover:text-primary-dark"
+                  >
+                    Limpiar
+                  </button>
+                )}
               </div>
-              <div className="space-y-3">
-                {['Disponible hoy', 'Acepta gatos', 'Casa con patio', 'Cuidador destacado'].map((filter) => (
-                  <label key={filter} className="flex items-center gap-3 text-sm text-gray-700 cursor-pointer">
-                    <input type="checkbox" className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary" />
-                    <span>{filter}</span>
+
+              <div className="space-y-2">
+                {[
+                  { key: 'availableToday', label: 'Disponible hoy' },
+                  { key: 'cats', label: 'Acepta gatos' },
+                  { key: 'patio', label: 'Casa con patio' },
+                  { key: 'featured', label: 'Cuidador destacado' },
+                ].map((filter) => (
+                  <label
+                    key={filter.key}
+                    className={`flex cursor-pointer items-center justify-between gap-3 rounded-xl border px-3 py-2.5 text-sm font-semibold transition ${
+                      quickFilters[filter.key]
+                        ? 'border-primary bg-primary-light text-primary-dark'
+                        : 'border-gray-200 text-gray-700 hover:border-primary/40 hover:bg-gray-50'
+                    }`}
+                  >
+                    <span>{filter.label}</span>
+                    <input
+                      type="checkbox"
+                      checked={quickFilters[filter.key]}
+                      onChange={() => toggleQuickFilter(filter.key)}
+                      className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
+                    />
                   </label>
                 ))}
               </div>
-              <div className="mt-6 rounded-xl bg-primary-light p-4">
+
+              <div className="mt-5 border-t border-gray-100 pt-5">
+                <div className="flex items-center justify-between gap-3">
+                  <p className="text-sm font-bold text-gray-950">Precio máximo</p>
+                  <p className="text-sm font-bold text-primary-dark">${maxPrice.toLocaleString('es-CL')}</p>
+                </div>
+                <input
+                  type="range"
+                  min="10000"
+                  max="20000"
+                  step="1000"
+                  value={maxPrice}
+                  onChange={(event) => setMaxPrice(Number(event.target.value))}
+                  className="mt-3 w-full accent-primary"
+                />
+                <div className="mt-1 flex justify-between text-xs font-semibold text-gray-400">
+                  <span>$10.000</span>
+                  <span>$20.000</span>
+                </div>
+              </div>
+
+              <div className="mt-5 border-t border-gray-100 pt-5">
+                <p className="text-sm font-bold text-gray-950">Rating mínimo</p>
+                <div className="mt-3 grid grid-cols-3 gap-2">
+                  {[
+                    { label: 'Todos', value: 0 },
+                    { label: '4.7+', value: 4.7 },
+                    { label: '4.9+', value: 4.9 },
+                  ].map((option) => (
+                    <button
+                      key={option.label}
+                      type="button"
+                      onClick={() => setMinRating(option.value)}
+                      className={`rounded-xl border px-2 py-2 text-xs font-bold transition ${
+                        minRating === option.value
+                          ? 'border-primary bg-primary text-white'
+                          : 'border-gray-200 text-gray-600 hover:border-primary/40'
+                      }`}
+                    >
+                      {option.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div className="mt-5 rounded-xl bg-primary-light p-4">
                 <p className="text-sm font-bold text-gray-950">Tip Pawners</p>
-                <p className="mt-1 text-sm text-gray-600">Guarda 2 o 3 perfiles favoritos antes de decidir. Las mejores reservas suelen cerrarse más rápido.</p>
+                <p className="mt-1 text-sm text-gray-600">Combina precio, rating y disponibilidad para comparar perfiles sin perder buenas alternativas cercanas.</p>
               </div>
             </div>
           </aside>
@@ -431,6 +555,20 @@ export default function SearchListings() {
               <div className="bg-amber-50 border border-amber-200 text-amber-900 p-4 rounded-xl mb-6">
                 <h3 className="font-bold flex items-center gap-2"><MapPin size={18} /> No encontramos cuidadores en "{searchTerm}"</h3>
                 <p className="text-sm mt-1">Te mostramos alternativas destacadas mientras ampliamos cobertura en esa comuna.</p>
+              </div>
+            )}
+
+            {visibleListings.length === 0 && (
+              <div className="rounded-xl border border-gray-200 bg-white p-6 text-center shadow-sm">
+                <h3 className="text-lg font-bold text-gray-950">No hay perfiles con esos filtros</h3>
+                <p className="mt-1 text-sm text-gray-500">Prueba subir el precio máximo o limpiar filtros para ver más cuidadores.</p>
+                <button
+                  type="button"
+                  onClick={resetFilters}
+                  className="mt-4 rounded-xl bg-primary px-4 py-2 text-sm font-bold text-white transition hover:bg-primary-dark"
+                >
+                  Limpiar filtros
+                </button>
               </div>
             )}
 
