@@ -1,0 +1,391 @@
+// pawners/backend/prisma/schema.prisma
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ---------------------------------------------------------
+// ENUMS (Listas de valores permitidos)
+// ---------------------------------------------------------
+
+enum Role {
+  owner
+  caregiver
+  both
+}
+
+enum ProfileVisibility {
+  public
+  private
+}
+
+enum PetSpecies {
+  dog
+  cat
+  bird
+  rabbit
+  reptile
+  other
+}
+
+enum PetSize {
+  small
+  medium
+  large
+  xlarge
+}
+
+enum ServiceType {
+  walking
+  boarding
+  daycare
+  home_visit
+  overnight
+  exotic_care
+}
+
+enum PriceUnit {
+  hour
+  day
+  night
+  visit
+}
+
+enum BookingStatus {
+  pending
+  accepted
+  rejected
+  completed
+  cancelled
+}
+
+enum PlanType {
+  free
+  premium
+}
+
+enum BillingCycle {
+  monthly
+  quarterly
+  annual
+}
+
+enum SubscriptionStatus {
+  active
+  cancelled
+  expired
+  trial
+}
+
+enum PaymentType {
+  subscription
+  booking
+}
+
+enum PaymentGateway {
+  mercadopago
+  stripe
+}
+
+enum ReportStatus {
+  pending
+  reviewed
+  resolved
+}
+
+// ---------------------------------------------------------
+// MODELS (Tablas de la Base de Datos)
+// ---------------------------------------------------------
+
+model User {
+  id                 String            @id @default(uuid())
+  email              String            @unique
+  password_hash      String
+  role               Role              @default(owner)
+  full_name          String
+  phone              String?
+  avatar_url         String?
+  comuna             String?
+  region             String?
+  identity_verified  Boolean           @default(false)
+  email_verified     Boolean           @default(false)
+  profile_visibility ProfileVisibility @default(private)
+  created_at         DateTime          @default(now())
+  last_active_at     DateTime          @default(now())
+
+  // Relaciones
+  pets                Pet[]
+  caregiver_profile   CaregiverProfile?
+  subscriptions       Subscription[]
+  payments            Payment[]
+  badges              Badge[]
+  notifications       Notification[]
+
+  // Como dueño (Owner)
+  bookings_as_owner         Booking[]      @relation("BookingsAsOwner")
+  conversations_as_owner    Conversation[] @relation("ConversationsAsOwner")
+  favorites_as_owner        Favorite[]     @relation("FavoritesAsOwner")
+  
+  // Como cuidador (Caregiver)
+  bookings_as_caregiver      Booking[]      @relation("BookingsAsCaregiver")
+  conversations_as_caregiver Conversation[] @relation("ConversationsAsCaregiver")
+  favorites_as_caregiver     Favorite[]     @relation("FavoritesAsCaregiver")
+  
+  // Mensajería y Reseñas
+  messages_sent       Message[]      @relation("MessagesSent")
+  reviews_written     Review[]       @relation("ReviewsWritten")
+  reviews_received    Review[]       @relation("ReviewsReceived")
+
+  // Sistema de reportes
+  reports_filed       Report[]       @relation("ReportsFiled")
+  reports_against     Report[]       @relation("ReportsAgainst")
+
+  @@map("users")
+}
+
+model Pet {
+  id              String      @id @default(uuid())
+  owner_id        String
+  name            String
+  species         PetSpecies
+  breed           String?
+  age             Int?
+  size            PetSize?
+  special_needs   String?     @db.Text
+  photo_url       String?
+  behavior_notes  String?     @db.Text
+
+  owner           User        @relation(fields: [owner_id], references: [id], onDelete: Cascade)
+  bookings        Booking[]
+
+  @@map("pets")
+}
+
+model CaregiverProfile {
+  id                      String   @id @default(uuid())
+  user_id                 String   @unique
+  bio                     String?  @db.Text
+  experience_years        Int      @default(0)
+  identity_doc_url        String?
+  background_check_status String?  // Ej: "pending", "approved", "rejected"
+  total_reviews           Int      @default(0)
+  average_rating          Float    @default(0.0)
+  response_rate           Float    @default(100.0) // Porcentaje de respuesta
+  response_time_hours     Float    @default(1.0)   // Tiempo de respuesta en horas
+  supersitter_status      Boolean  @default(false) // Equivalente a Superhost
+  family_favorite         Boolean  @default(false)
+
+  user                    User        @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  listings                Listing[]
+  availability            Availability[]
+
+  @@map("caregiver_profiles")
+}
+
+model Listing {
+  id                  String        @id @default(uuid())
+  caregiver_id        String
+  title               String
+  description         String        @db.Text
+  services            ServiceType[] // Arrays soportados en PostgreSQL
+  pet_types_accepted  PetSpecies[]  
+  zones               String[]      // Array de comunas donde atiende
+  photos              String[]
+  featured            Boolean       @default(false)
+  active              Boolean       @default(true)
+  created_at          DateTime      @default(now())
+  updated_at          DateTime      @updatedAt
+
+  caregiver_profile   CaregiverProfile @relation(fields: [caregiver_id], references: [id], onDelete: Cascade)
+  prices              ListingPrice[]
+  bookings            Booking[]
+
+  @@map("listings")
+}
+
+model ListingPrice {
+  id            String      @id @default(uuid())
+  listing_id    String
+  service_type  ServiceType
+  price_clp     Int
+  unit          PriceUnit
+
+  listing       Listing     @relation(fields: [listing_id], references: [id], onDelete: Cascade)
+
+  @@map("listing_prices")
+}
+
+model Availability {
+  id            String   @id @default(uuid())
+  caregiver_id  String
+  date          DateTime @db.Date
+  available     Boolean  @default(true)
+  time_slots    String[] // Ej: ["09:00-12:00", "14:00-18:00"]
+
+  caregiver     CaregiverProfile @relation(fields: [caregiver_id], references: [id], onDelete: Cascade)
+
+  @@map("availability")
+}
+
+model Booking {
+  id                      String        @id @default(uuid())
+  owner_id                String
+  caregiver_id            String
+  listing_id              String
+  pet_id                  String?
+  start_date              DateTime
+  end_date                DateTime
+  service_type            ServiceType
+  status                  BookingStatus @default(pending)
+  subtotal                Int
+  service_fee_percentage  Float         // 3% (Premium) o 15% (Free)
+  service_fee_amount      Int           // Monto calculado en CLP de la tarifa
+  total_price             Int           // subtotal + service_fee_amount
+  payment_status          String        @default("pending") // Ej: "pending", "paid", "escrow", "released", "refunded"
+  created_at              DateTime      @default(now())
+
+  owner         User      @relation("BookingsAsOwner", fields: [owner_id], references: [id])
+  caregiver     User      @relation("BookingsAsCaregiver", fields: [caregiver_id], references: [id])
+  listing       Listing   @relation(fields: [listing_id], references: [id])
+  pet           Pet?      @relation(fields: [pet_id], references: [id])
+  reviews       Review[]
+
+  @@map("bookings")
+}
+
+model Review {
+  id           String   @id @default(uuid())
+  booking_id   String
+  reviewer_id  String
+  reviewed_id  String
+  rating       Int      @db.SmallInt // Valores del 1 al 5
+  comment      String?  @db.Text
+  created_at   DateTime @default(now())
+
+  booking      Booking  @relation(fields: [booking_id], references: [id])
+  reviewer     User     @relation("ReviewsWritten", fields: [reviewer_id], references: [id])
+  reviewed     User     @relation("ReviewsReceived", fields: [reviewed_id], references: [id])
+
+  @@map("reviews")
+}
+
+model Conversation {
+  id              String   @id @default(uuid())
+  owner_id        String
+  caregiver_id    String
+  initiated_by    String   // ID del usuario que abrió la conversación
+  last_message_at DateTime @default(now())
+  created_at      DateTime @default(now())
+
+  owner           User      @relation("ConversationsAsOwner", fields: [owner_id], references: [id])
+  caregiver       User      @relation("ConversationsAsCaregiver", fields: [caregiver_id], references: [id])
+  messages        Message[]
+
+  @@map("conversations")
+}
+
+model Message {
+  id              String   @id @default(uuid())
+  conversation_id String
+  sender_id       String
+  content         String   @db.Text
+  read            Boolean  @default(false)
+  created_at      DateTime @default(now())
+
+  conversation    Conversation @relation(fields: [conversation_id], references: [id], onDelete: Cascade)
+  sender          User         @relation("MessagesSent", fields: [sender_id], references: [id])
+
+  @@map("messages")
+}
+
+model Subscription {
+  id                 String             @id @default(uuid())
+  user_id            String
+  plan_type          PlanType
+  billing_cycle      BillingCycle
+  amount_clp         Int
+  status             SubscriptionStatus @default(active)
+  started_at         DateTime           @default(now())
+  expires_at         DateTime
+  auto_renew         Boolean            @default(true)
+  mp_subscription_id String?            // ID de preaprobación de Mercado Pago
+
+  user               User               @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@map("subscriptions")
+}
+
+model Payment {
+  id             String         @id @default(uuid())
+  user_id        String
+  type           PaymentType
+  reference_id   String         // ID de Booking o Subscription
+  transaction_id String?        // ID de la transacción en la pasarela
+  amount         Int
+  status         String         // "success", "failed", "pending"
+  gateway        PaymentGateway
+  created_at     DateTime       @default(now())
+
+  user           User           @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@map("payments")
+}
+
+model Favorite {
+  id           String   @id @default(uuid())
+  owner_id     String
+  caregiver_id String
+  created_at   DateTime @default(now())
+
+  owner        User     @relation("FavoritesAsOwner", fields: [owner_id], references: [id], onDelete: Cascade)
+  caregiver    User     @relation("FavoritesAsCaregiver", fields: [caregiver_id], references: [id], onDelete: Cascade)
+
+  @@unique([owner_id, caregiver_id]) // Evitar duplicados
+  @@map("favorites")
+}
+
+model Badge {
+  id         String   @id @default(uuid())
+  user_id    String
+  badge_type String   // Ej: "identity_verified", "supersitter", "response_fast"
+  earned_at  DateTime @default(now())
+
+  user       User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@map("badges")
+}
+
+model Notification {
+  id         String   @id @default(uuid())
+  user_id    String
+  type       String   // Ej: "message", "booking_request", "system"
+  title      String
+  content    String
+  read       Boolean  @default(false)
+  link       String?
+  created_at DateTime @default(now())
+
+  user       User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@map("notifications")
+}
+
+model Report {
+  id          String       @id @default(uuid())
+  reporter_id String
+  reported_id String
+  reason      String
+  description String       @db.Text
+  status      ReportStatus @default(pending)
+  created_at  DateTime     @default(now())
+
+  reporter    User         @relation("ReportsFiled", fields: [reporter_id], references: [id])
+  reported    User         @relation("ReportsAgainst", fields: [reported_id], references: [id])
+
+  @@map("reports")
+}
