@@ -9,7 +9,6 @@ export default function SearchListings() {
   const [service, setService] = useState('Todos los servicios');
   const [quickFilters, setQuickFilters] = useState({
     availableToday: false,
-    cats: false,
     patio: false,
     featured: false,
   });
@@ -310,7 +309,6 @@ export default function SearchListings() {
   const resetFilters = () => {
     setQuickFilters({
       availableToday: false,
-      cats: false,
       patio: false,
       featured: false,
     });
@@ -323,7 +321,6 @@ export default function SearchListings() {
     service === 'Todos los servicios' || listing.services.includes(service)
   );
   const filteredListings = serviceListings.filter((listing) => {
-    const acceptsCats = listing.services.includes('Gatos');
     const hasPatio = listing.services.includes('Casa con patio')
       || listing.title.toLowerCase().includes('patio')
       || listing.description.toLowerCase().includes('patio');
@@ -331,7 +328,6 @@ export default function SearchListings() {
     return listing.price <= maxPrice
       && listing.rating >= minRating
       && (!quickFilters.availableToday || availableTodayIds.includes(listing.id))
-      && (!quickFilters.cats || acceptsCats)
       && (!quickFilters.patio || hasPatio)
       && (!quickFilters.featured || listing.featured);
   });
@@ -412,7 +408,6 @@ export default function SearchListings() {
                   <option>Todos los servicios</option>
                   <option>Alojamiento</option>
                   <option>Paseos</option>
-                  <option>Gatos</option>
                   <option>Visitas</option>
                 </select>
               </div>
@@ -424,7 +419,6 @@ export default function SearchListings() {
 
                 <div className="mt-3 flex flex-wrap gap-2 text-xs text-gray-600">
                   {[
-                    { icon: ShieldCheck, label: 'Identidad verificada' },
                     { icon: Star, label: 'Reseñas reales' },
                     { icon: Clock, label: 'Respuesta rápida' },
                   ].map(({ icon: Icon, label }) => (
@@ -468,7 +462,6 @@ export default function SearchListings() {
               <div className="space-y-2">
                 {[
                   { key: 'availableToday', label: 'Disponible hoy' },
-                  { key: 'cats', label: 'Acepta gatos' },
                   { key: 'patio', label: 'Casa con patio' },
                   { key: 'featured', label: 'Cuidador destacado' },
                 ].map((filter) => (
