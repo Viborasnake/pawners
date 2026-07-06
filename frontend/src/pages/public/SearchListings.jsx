@@ -77,20 +77,25 @@ export default function SearchListings() {
 
   return (
     <div className="w-full min-h-screen bg-[#f6f8f7] pb-16">
-      <section className="border-b border-gray-200 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:py-10">
-          <div className="max-w-3xl mb-6">
-            <p className="text-sm font-semibold text-primary-dark mb-2">Cuidadores verificados en Chile</p>
-            <h1 className="text-3xl md:text-4xl font-bold text-gray-950 leading-tight">
-              Encuentra cuidado confiable cerca de tu casa.
-            </h1>
-            <p className="text-gray-600 mt-3 max-w-2xl">
-              Compara disponibilidad, reseñas y precios antes de contactar al cuidador ideal para tu mascota.
-            </p>
-          </div>
+      <section className="border-b border-gray-200 bg-[#f6f8f7]">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+          <div className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm sm:p-6">
+            <div className="grid gap-5 lg:grid-cols-[minmax(0,0.8fr)_minmax(520px,1.2fr)] lg:items-end">
+              <div>
+                <p className="inline-flex items-center gap-2 rounded-full bg-primary-light px-3 py-1.5 text-xs font-bold text-primary-dark">
+                  <ShieldCheck size={14} />
+                  Cuidadores verificados en Chile
+                </p>
+                <h1 className="mt-4 text-2xl font-bold leading-tight text-gray-950 sm:text-3xl">
+                  Encuentra cuidado cerca de tu casa.
+                </h1>
+                <p className="mt-2 max-w-xl text-sm leading-relaxed text-gray-600">
+                  Compara disponibilidad, reseñas y precios antes de contactar.
+                </p>
+              </div>
 
-          <div className="bg-white border border-gray-200 shadow-sm rounded-2xl p-3 relative z-40">
-            <div className="grid gap-3 lg:grid-cols-[1fr_230px_136px]">
+              <div className="relative z-40 rounded-2xl border border-gray-200 bg-gray-50 p-3">
+                <div className="grid gap-3 lg:grid-cols-[1fr_210px_124px]">
               <div className="relative" ref={wrapperRef}>
                 <MapPin size={19} className="absolute left-4 top-1/2 -translate-y-1/2 text-primary-dark" />
                 <input
@@ -138,20 +143,22 @@ export default function SearchListings() {
               <button className="h-12 rounded-xl bg-primary px-5 text-sm font-bold text-white shadow-sm shadow-primary/20 transition hover:bg-primary-dark flex items-center justify-center gap-2">
                 <Search size={18} /> Buscar
               </button>
-            </div>
-          </div>
+                </div>
 
-          <div className="mt-5 flex flex-wrap gap-2 text-sm text-gray-600">
-            {[
-              { icon: ShieldCheck, label: 'Identidad verificada' },
-              { icon: Star, label: 'Reseñas reales' },
-              { icon: Clock, label: 'Respuesta rápida' },
-            ].map(({ icon: Icon, label }) => (
-              <span key={label} className="inline-flex items-center gap-2 rounded-full border border-gray-200 bg-gray-50 px-3 py-1.5">
-                <Icon size={15} className="text-primary-dark" />
-                {label}
-              </span>
-            ))}
+                <div className="mt-3 flex flex-wrap gap-2 text-xs text-gray-600">
+                  {[
+                    { icon: ShieldCheck, label: 'Identidad verificada' },
+                    { icon: Star, label: 'Reseñas reales' },
+                    { icon: Clock, label: 'Respuesta rápida' },
+                  ].map(({ icon: Icon, label }) => (
+                    <span key={label} className="inline-flex items-center gap-1.5 rounded-full bg-white px-2.5 py-1.5 font-semibold shadow-sm ring-1 ring-gray-200">
+                      <Icon size={13} className="text-primary-dark" />
+                      {label}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </section>
