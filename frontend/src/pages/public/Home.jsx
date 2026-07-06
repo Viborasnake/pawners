@@ -125,12 +125,13 @@ export default function Home() {
           alt="Perros paseando al aire libre"
           className="absolute inset-0 h-full w-full object-cover"
         />
-        <div className="absolute inset-0 bg-gradient-to-r from-gray-950/88 via-gray-950/62 to-gray-950/20" />
+        <div className="absolute inset-0 bg-gradient-to-r from-gray-950/94 via-gray-950/72 to-gray-950/30" />
+        <div className="absolute inset-y-0 left-0 w-full max-w-5xl bg-gray-950/22" />
         <div className="absolute inset-x-0 bottom-0 h-36 bg-gradient-to-t from-[#f6f8f7] to-transparent" />
 
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-24 lg:pt-28">
           <div className="max-w-3xl">
-            <div className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-3 py-1.5 text-sm font-semibold text-white shadow-sm backdrop-blur">
+            <div className="inline-flex items-center gap-2 rounded-full border border-white/18 bg-gray-950/72 px-3 py-1.5 text-sm font-semibold text-white shadow-sm backdrop-blur">
               <Sparkles size={16} className="text-secondary" />
               Cuidadores de mascotas cerca de ti
             </div>
@@ -196,9 +197,9 @@ export default function Home() {
 
             <div className="mt-6 grid max-w-2xl grid-cols-2 gap-2 sm:grid-cols-4">
               {TRUST_ITEMS.map(({ icon: Icon, label }) => (
-                <div key={label} className="rounded-xl border border-white/16 bg-white/10 px-3 py-3 backdrop-blur">
+                <div key={label} className="rounded-xl border border-white/14 bg-gray-950/76 px-3 py-3 shadow-lg shadow-gray-950/10 backdrop-blur">
                   <Icon size={18} className="mb-2 text-secondary" />
-                  <p className="text-sm font-semibold leading-snug text-white/88">{label}</p>
+                  <p className="text-sm font-bold leading-snug text-white">{label}</p>
                 </div>
               ))}
             </div>
