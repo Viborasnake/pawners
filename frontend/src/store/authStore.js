@@ -13,6 +13,24 @@ const DEMO_USER = {
   role: 'owner'
 };
 
+const DEMO_SESSION_KEY = 'pawners_demo_session';
+
+const hasStoredDemoSession = () => (
+  typeof window !== 'undefined' && window.localStorage.getItem(DEMO_SESSION_KEY) === 'active'
+);
+
+const storeDemoSession = () => {
+  if (typeof window !== 'undefined') {
+    window.localStorage.setItem(DEMO_SESSION_KEY, 'active');
+  }
+};
+
+const clearDemoSession = () => {
+  if (typeof window !== 'undefined') {
+    window.localStorage.removeItem(DEMO_SESSION_KEY);
+  }
+};
+
 const isDemoCredentials = (email, password) => (
   email.trim().toLowerCase() === DEMO_USER.email && password === '123456'
 );
@@ -56,6 +74,16 @@ export const useAuthStore = create((set, get) => ({
       set({ isLoading: true });
 
       if (!isSupabaseConfigured) {
+        if (hasStoredDemoSession()) {
+          set({
+            isAuthenticated: true,
+            role: DEMO_USER.role,
+            user: DEMO_USER,
+            isLoading: false
+          });
+          return;
+        }
+
         set({ isAuthenticated: false, user: null, role: null, isLoading: false });
         return;
       }
@@ -167,6 +195,8 @@ export const useAuthStore = create((set, get) => ({
           return { success: false, error: 'Email o contraseña incorrectos. Para el demo usa viborasnake@gmail.com / 123456.' };
         }
 
+        storeDemoSession();
+
         set({
           isAuthenticated: true,
           role: DEMO_USER.role,
@@ -209,6 +239,7 @@ export const useAuthStore = create((set, get) => ({
   logout: async () => {
     try {
       if (!isSupabaseConfigured) {
+        clearDemoSession();
         set({ isAuthenticated: false, user: null, role: null });
         return;
       }
