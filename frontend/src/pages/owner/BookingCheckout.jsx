@@ -35,6 +35,18 @@ export default function CaregiverProfile() {
     ]
   };
 
+  const highlights = [
+    { label: '5 años de experiencia', icon: ShieldCheck },
+    { label: 'Responde por WhatsApp', icon: Phone },
+    { label: '8 reseñas verificadas', icon: Star },
+  ];
+
+  const checkoutBenefits = [
+    'Pago único por desbloquear contacto',
+    'Pawners no toma comisión del cuidado',
+    'Coordina fechas y condiciones directo con Ana',
+  ];
+
   useEffect(() => {
     initMercadoPago(import.meta.env.VITE_MP_PUBLIC_KEY, { locale: 'es-CL' });
 
@@ -80,116 +92,191 @@ export default function CaregiverProfile() {
   };
 
   return (
-    <div className="bg-gray-50 min-h-screen pb-20">
-      {/* Cover Photo */}
-      <div className="h-64 w-full bg-gradient-to-r from-primary to-primary-dark relative">
-        <button onClick={() => navigate(-1)} className="absolute top-6 left-6 bg-white/20 hover:bg-white/40 text-white backdrop-blur-sm transition-colors py-2 px-4 rounded-full text-sm font-bold flex items-center gap-2">
-          &larr; Volver
-        </button>
-      </div>
+    <div className="min-h-screen bg-[#f6f8f7] pb-16 text-gray-900">
+      <section className="relative overflow-hidden bg-gray-950 text-white">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,_rgba(91,192,190,0.36),_transparent_34%),linear-gradient(135deg,_#0f172a_0%,_#134e4a_55%,_#111827_100%)]" />
+        <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-[#f6f8f7] to-transparent" />
 
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 -mt-24 relative z-10">
-        <div className="grid lg:grid-cols-3 gap-8">
-          
-          {/* Main Content (Left) */}
-          <div className="lg:col-span-2 space-y-6">
-            
-            {/* Header Info */}
-            <div className="bg-white p-8 rounded-3xl shadow-sm border border-gray-100">
-              <div className="flex flex-col sm:flex-row items-center sm:items-start gap-6">
-                <img src={caregiver.avatar} alt={caregiver.name} className="w-32 h-32 rounded-full border-4 border-white shadow-lg object-cover" />
-                <div className="text-center sm:text-left mt-2">
-                  <h1 className="text-3xl font-bold text-gray-900">{caregiver.name}</h1>
-                  <div className="flex flex-wrap items-center justify-center sm:justify-start gap-4 mt-3 text-gray-600">
-                    <span className="flex items-center gap-1.5 font-medium"><MapPin size={18} className="text-primary" /> {caregiver.location}</span>
-                    <span className="flex items-center gap-1.5 font-medium"><Star size={18} className="text-secondary text-yellow-400 fill-current" /> {caregiver.rating} ({caregiver.reviews} reseñas)</span>
-                  </div>
-                </div>
-              </div>
-            </div>
+        <div className="relative mx-auto max-w-6xl px-4 pb-32 pt-6 sm:px-6 lg:px-8">
+          <button onClick={() => navigate(-1)} className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-4 py-2 text-sm font-bold text-white transition hover:bg-white/18">
+            &larr; Volver
+          </button>
 
-            {/* About */}
-            <div className="bg-white p-8 rounded-3xl shadow-sm border border-gray-100">
-              <h2 className="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
-                <User className="text-primary" /> Acerca de mí
-              </h2>
-              <p className="text-gray-600 leading-relaxed">
-                {caregiver.about}
+          <div className="mt-12 grid gap-8 lg:grid-cols-[1fr_360px] lg:items-end">
+            <div>
+              <p className="inline-flex items-center gap-2 rounded-full bg-white px-3 py-1.5 text-sm font-bold text-primary-dark">
+                <ShieldCheck size={16} />
+                Contacto seguro Pawners
+              </p>
+              <h1 className="mt-5 max-w-3xl text-4xl font-bold leading-tight sm:text-5xl">
+                Reserva con {caregiver.name} y coordina directo por WhatsApp.
+              </h1>
+              <p className="mt-4 max-w-2xl text-base leading-relaxed text-white/82 sm:text-lg">
+                Revisa su perfil antes de pagar la tarifa única. Después del desbloqueo tendrás el número para acordar fechas, horarios y detalles del cuidado.
               </p>
             </div>
 
-            {/* Services */}
-            <div className="bg-white p-8 rounded-3xl shadow-sm border border-gray-100">
-              <h2 className="text-xl font-bold text-gray-900 mb-6 flex items-center gap-2">
-                <CheckCircle2 className="text-primary" /> Servicios que ofrezco
-              </h2>
-              <ul className="grid sm:grid-cols-2 gap-4">
-                {caregiver.services.map((service, idx) => (
-                  <li key={idx} className="flex items-start gap-3 text-gray-700">
-                    <Check className="text-green-500 shrink-0 mt-0.5" size={20} />
-                    <span>{service}</span>
-                  </li>
-                ))}
-              </ul>
+            <div className="hidden rounded-2xl border border-white/14 bg-white/10 p-4 shadow-2xl shadow-gray-950/25 backdrop-blur lg:block">
+              <div className="flex items-center gap-4">
+                <img src={caregiver.avatar} alt={caregiver.name} className="h-16 w-16 rounded-full border-2 border-white object-cover shadow-lg" />
+                <div>
+                  <p className="text-lg font-bold">{caregiver.name}</p>
+                  <p className="mt-1 flex items-center gap-1.5 text-sm text-white/76">
+                    <MapPin size={15} className="text-primary" /> {caregiver.location}
+                  </p>
+                </div>
+              </div>
+              <div className="mt-4 flex items-center justify-between rounded-xl bg-gray-950/35 px-4 py-3">
+                <span className="text-sm text-white/72">Tarifa de conexión</span>
+                <span className="text-2xl font-bold text-white">${flatFee.toLocaleString('es-CL')}</span>
+              </div>
             </div>
+          </div>
+        </div>
+      </section>
 
-            {/* Reviews */}
-            <div className="bg-white p-8 rounded-3xl shadow-sm border border-gray-100">
-              <h2 className="text-xl font-bold text-gray-900 mb-6 flex items-center gap-2">
-                <Star className="text-primary fill-primary" /> Reseñas ({caregiver.reviews})
-              </h2>
-              <div className="space-y-6">
-                {caregiver.reviewList.map(review => (
-                  <div key={review.id} className="border-b border-gray-100 last:border-0 pb-6 last:pb-0">
-                    <div className="flex items-center gap-3 mb-2">
-                      <div className="w-10 h-10 bg-primary-light rounded-full flex items-center justify-center text-primary-dark font-bold">
-                        {review.author.charAt(0)}
-                      </div>
-                      <div>
-                        <p className="font-bold text-gray-900">{review.author}</p>
-                        <p className="text-xs text-gray-500">{review.date}</p>
-                      </div>
-                      <div className="ml-auto flex gap-0.5">
-                        {[...Array(review.rating)].map((_, i) => (
-                          <Star key={i} size={14} className="text-yellow-400 fill-current" />
-                        ))}
+      <main className="relative z-10 mx-auto -mt-24 max-w-6xl px-4 sm:px-6 lg:px-8">
+        <div className="grid gap-6 lg:grid-cols-[1fr_380px] lg:items-start">
+          <div className="space-y-5">
+            <section className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm sm:p-6">
+              <div className="flex flex-col gap-5 sm:flex-row sm:items-center">
+                <img src={caregiver.avatar} alt={caregiver.name} className="h-24 w-24 rounded-full border-4 border-white object-cover shadow-lg sm:h-28 sm:w-28" />
+                <div className="min-w-0 flex-1">
+                  <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+                    <div>
+                      <h2 className="text-3xl font-bold text-gray-950">{caregiver.name}</h2>
+                      <div className="mt-2 flex flex-wrap items-center gap-3 text-sm font-semibold text-gray-600">
+                        <span className="inline-flex items-center gap-1.5"><MapPin size={16} className="text-primary-dark" /> {caregiver.location}</span>
+                        <span className="inline-flex items-center gap-1.5"><Star size={16} className="fill-accent text-accent" /> {caregiver.rating} ({caregiver.reviews} reseñas)</span>
                       </div>
                     </div>
-                    <p className="text-gray-600 text-sm leading-relaxed">{review.text}</p>
+                    <span className="inline-flex w-fit items-center gap-1.5 rounded-full bg-primary-light px-3 py-1.5 text-sm font-bold text-primary-dark">
+                      <CheckCircle2 size={15} /> Perfil verificado
+                    </span>
+                  </div>
+
+                  <div className="mt-5 grid gap-2 sm:grid-cols-3">
+                    {highlights.map(({ label, icon: Icon }) => (
+                      <div key={label} className="flex items-center gap-2 rounded-xl bg-gray-50 px-3 py-2 text-sm font-semibold text-gray-700">
+                        <Icon size={16} className="shrink-0 text-primary-dark" />
+                        <span>{label}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <section className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm sm:p-6">
+              <h2 className="flex items-center gap-2 text-xl font-bold text-gray-950">
+                <User className="text-primary-dark" /> Acerca de Ana
+              </h2>
+              <p className="mt-4 text-base leading-relaxed text-gray-600">
+                {caregiver.about}
+              </p>
+            </section>
+
+            <section className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm sm:p-6">
+              <h2 className="flex items-center gap-2 text-xl font-bold text-gray-950">
+                <CheckCircle2 className="text-primary-dark" /> Servicios incluidos
+              </h2>
+              <div className="mt-5 grid gap-3 sm:grid-cols-2">
+                {caregiver.services.map((service) => (
+                  <div key={service} className="flex items-start gap-3 rounded-xl border border-gray-100 bg-gray-50 px-4 py-3 text-sm font-semibold text-gray-700">
+                    <Check className="mt-0.5 shrink-0 text-primary-dark" size={18} />
+                    <span>{service}</span>
                   </div>
                 ))}
               </div>
-            </div>
-            
+            </section>
+
+            <section className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm sm:p-6">
+              <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+                <div>
+                  <h2 className="flex items-center gap-2 text-xl font-bold text-gray-950">
+                    <Star className="fill-accent text-accent" /> Reseñas reales
+                  </h2>
+                  <p className="mt-1 text-sm text-gray-500">Comentarios de familias que ya contactaron a la cuidadora.</p>
+                </div>
+                <div className="flex items-center gap-2 text-sm font-bold text-gray-800">
+                  <Star size={16} className="fill-accent text-accent" />
+                  {caregiver.rating} promedio
+                </div>
+              </div>
+
+              <div className="mt-5 grid gap-4">
+                {caregiver.reviewList.map(review => (
+                  <article key={review.id} className="rounded-xl border border-gray-100 bg-white p-4 shadow-sm">
+                    <div className="flex items-start gap-3">
+                      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-secondary-light text-sm font-bold text-secondary-dark">
+                        {review.author.charAt(0)}
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <div className="flex flex-wrap items-center justify-between gap-2">
+                          <div>
+                            <p className="font-bold text-gray-950">{review.author}</p>
+                            <p className="text-xs text-gray-500">{review.date}</p>
+                          </div>
+                          <div className="flex gap-0.5">
+                            {[...Array(review.rating)].map((_, i) => (
+                              <Star key={i} size={14} className="fill-accent text-accent" />
+                            ))}
+                          </div>
+                        </div>
+                        <p className="mt-3 text-sm leading-relaxed text-gray-600">{review.text}</p>
+                      </div>
+                    </div>
+                  </article>
+                ))}
+              </div>
+            </section>
           </div>
 
-          {/* Sidebar / Checkout (Right) */}
-          <div className="lg:col-span-1">
-            <div className="sticky top-8 space-y-6">
-              
-              {!isUnlocked ? (
-                <div className="bg-white p-6 rounded-3xl shadow-xl border border-gray-100 border-t-4 border-t-primary">
-                  <h3 className="font-bold text-2xl text-gray-900 mb-2">Desbloquea su número</h3>
-                  <p className="text-gray-500 text-sm mb-6 leading-relaxed">
-                    Paga la tarifa única para obtener el WhatsApp de <strong>{caregiver.name}</strong> y coordinar los detalles del cuidado.
+          <aside className="lg:sticky lg:top-6">
+            {!isUnlocked ? (
+              <section className="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-xl shadow-gray-900/8">
+                <div className="border-b border-gray-100 bg-gray-950 px-5 py-5 text-white">
+                  <p className="text-sm font-semibold text-primary-light">Resumen de pago</p>
+                  <h3 className="mt-1 text-2xl font-bold">Desbloquea el WhatsApp</h3>
+                  <p className="mt-2 text-sm leading-relaxed text-white/72">
+                    Paga una vez para obtener el contacto de <strong className="text-white">{caregiver.name}</strong>.
                   </p>
-                  
-                  <div className="bg-gray-50 rounded-2xl p-5 flex items-center justify-center gap-3 border border-gray-200 mb-6">
-                    <Lock size={20} className="text-gray-400" />
-                    <p className="font-mono text-2xl tracking-widest text-gray-500 blur-[6px] select-none">+56 9 **** ****</p>
+                </div>
+
+                <div className="p-5">
+                  <div className="flex items-center gap-3 border-b border-gray-100 pb-5">
+                    <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary-light text-primary-dark">
+                      <Lock size={20} />
+                    </div>
+                    <div>
+                      <p className="text-xs font-bold text-gray-400">Número protegido</p>
+                      <p className="mt-1 font-mono text-lg font-bold text-gray-500 blur-[5px] select-none">+56 9 **** ****</p>
+                    </div>
                   </div>
 
-                  <div className="flex justify-between items-center border-t border-gray-100 pt-6 mb-6">
-                    <span className="font-medium text-gray-600">Tarifa de conexión</span>
-                    <span className="font-bold text-2xl text-primary">${flatFee.toLocaleString('es-CL')}</span>
+                  <div className="space-y-3 border-b border-gray-100 py-5">
+                    {checkoutBenefits.map((benefit) => (
+                      <div key={benefit} className="flex items-start gap-2 text-sm font-medium text-gray-600">
+                        <CheckCircle2 size={17} className="mt-0.5 shrink-0 text-primary-dark" />
+                        <span>{benefit}</span>
+                      </div>
+                    ))}
+                  </div>
+
+                  <div className="flex items-end justify-between py-5">
+                    <div>
+                      <p className="text-sm font-semibold text-gray-500">Total a pagar</p>
+                      <p className="mt-1 text-xs text-gray-400">Tarifa única de conexión</p>
+                    </div>
+                    <span className="text-3xl font-bold text-primary-dark">${flatFee.toLocaleString('es-CL')}</span>
                   </div>
 
                   {!isAuthenticated ? (
-                    <button 
+                    <button
                       onClick={() => navigate('/auth')}
-                      className="w-full py-4 rounded-xl font-bold text-white bg-primary hover:bg-primary-dark transition-colors text-lg flex items-center justify-center gap-2 shadow-md shadow-primary/20"
+                      className="flex w-full items-center justify-center gap-2 rounded-xl bg-primary px-5 py-4 text-base font-bold text-white shadow-lg shadow-primary/25 transition hover:bg-primary-dark"
                     >
-                      <User size={20} /> Inicia sesión para pagar
+                      <User size={19} /> Inicia sesión para pagar
                     </button>
                   ) : preferenceId ? (
                     <Wallet
@@ -197,58 +284,56 @@ export default function CaregiverProfile() {
                       customization={customization}
                     />
                   ) : (
-                    <button 
+                    <button
                       disabled={true}
-                      className="w-full py-4 rounded-xl font-bold text-white bg-gray-400 cursor-not-allowed text-lg flex items-center justify-center gap-2"
+                      className="flex w-full cursor-not-allowed items-center justify-center gap-2 rounded-xl bg-gray-300 px-5 py-4 text-base font-bold text-white"
                     >
-                      <Clock className="animate-spin" size={20} /> Cargando medio de pago...
+                      <Clock className="animate-spin" size={19} /> Cargando medio de pago...
                     </button>
                   )}
-                </div>
-              ) : (
-                <div className="bg-gradient-to-b from-green-50 to-white p-8 rounded-3xl shadow-xl border border-green-200 text-center relative overflow-hidden">
-                  <div className="absolute top-0 left-0 w-full h-2 bg-green-500"></div>
-                  <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4 border-4 border-white shadow-sm">
-                    <CheckCircle2 size={40} className="text-green-600" />
-                  </div>
-                  <h3 className="font-bold text-2xl text-gray-900 mb-2">¡Desbloqueado!</h3>
-                  <p className="text-gray-600 text-sm mb-6">
-                    Ya puedes comunicarte directamente.
-                  </p>
-                  
-                  <div className="bg-white border-2 border-green-100 shadow-inner rounded-2xl p-5 mb-6">
-                    <p className="text-xs text-gray-400 font-bold uppercase tracking-wider mb-2">WhatsApp</p>
-                    <a href={`https://wa.me/${caregiver.phone.replace(/[^0-9]/g, '')}`} target="_blank" rel="noopener noreferrer" className="flex items-center justify-center gap-2 group">
-                      <Phone className="text-green-600 group-hover:scale-110 transition-transform" size={22} />
-                      <span className="text-2xl font-bold text-gray-900 group-hover:text-green-600 transition-colors">
-                        {caregiver.phone}
-                      </span>
-                    </a>
-                  </div>
 
-                  <a 
-                    href={`https://wa.me/${caregiver.phone.replace(/[^0-9]/g, '')}`} 
-                    target="_blank" 
-                    rel="noopener noreferrer"
-                    className="w-full bg-[#25D366] hover:bg-[#128C7E] text-white font-bold py-4 px-6 rounded-xl transition-colors flex items-center justify-center gap-2 shadow-md shadow-green-500/20"
-                  >
-                    Abrir WhatsApp
-                  </a>
-                  
-                  <button 
-                    onClick={() => navigate('/panel/owner/mensajes')}
-                    className="w-full mt-4 bg-white border-2 border-gray-100 text-gray-700 hover:bg-gray-50 font-bold py-3 px-6 rounded-xl transition-colors"
-                  >
-                    Ver mis contactos
-                  </button>
+                  <p className="mt-4 flex items-center justify-center gap-2 text-center text-xs font-medium text-gray-500">
+                    <ShieldCheck size={15} className="text-primary-dark" />
+                    Tus datos de pago se procesan de forma segura.
+                  </p>
                 </div>
-              )}
-              
-            </div>
-          </div>
-          
+              </section>
+            ) : (
+              <section className="rounded-2xl border border-green-200 bg-white p-6 text-center shadow-xl shadow-green-900/10">
+                <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-green-100">
+                  <CheckCircle2 size={34} className="text-green-600" />
+                </div>
+                <h3 className="text-2xl font-bold text-gray-950">Contacto desbloqueado</h3>
+                <p className="mt-2 text-sm text-gray-600">Ya puedes comunicarte directamente con {caregiver.name}.</p>
+
+                <div className="my-6 border-y border-gray-100 py-5">
+                  <p className="text-xs font-bold text-gray-400">WhatsApp</p>
+                  <a href={`https://wa.me/${caregiver.phone.replace(/[^0-9]/g, '')}`} target="_blank" rel="noopener noreferrer" className="mt-2 flex items-center justify-center gap-2 font-bold text-gray-950 transition hover:text-green-600">
+                    <Phone className="text-green-600" size={22} />
+                    <span className="text-xl">{caregiver.phone}</span>
+                  </a>
+                </div>
+
+                <a
+                  href={`https://wa.me/${caregiver.phone.replace(/[^0-9]/g, '')}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex w-full items-center justify-center gap-2 rounded-xl bg-[#25D366] px-6 py-4 font-bold text-white shadow-lg shadow-green-500/20 transition hover:bg-[#128C7E]"
+                >
+                  Abrir WhatsApp
+                </a>
+
+                <button
+                  onClick={() => navigate('/panel/owner/mensajes')}
+                  className="mt-3 w-full rounded-xl border border-gray-200 bg-white px-6 py-3 font-bold text-gray-700 transition hover:bg-gray-50"
+                >
+                  Ver mis contactos
+                </button>
+              </section>
+            )}
+          </aside>
         </div>
-      </div>
+      </main>
     </div>
   );
 }
