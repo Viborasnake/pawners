@@ -11,7 +11,9 @@ export default function SearchListings() {
 
   const COMUNAS = [
     'Santiago', 'Providencia', 'Ñuñoa', 'Las Condes', 'San Miguel', 'Viña del Mar',
-    'Concepción', 'Antofagasta', 'La Serena', 'Temuco', 'Valparaíso',
+    'La Florida', 'Macul', 'La Reina', 'San Joaquín', 'Vitacura', 'Maipú',
+    'Peñalolén', 'Recoleta', 'Concepción', 'Antofagasta', 'La Serena', 'Temuco',
+    'Valparaíso',
   ];
 
   const [listings] = useState([
@@ -33,7 +35,7 @@ export default function SearchListings() {
       cover: "https://images.unsplash.com/photo-1601758124510-52d02ddb7cbd?q=80&w=900&auto=format&fit=crop"
     },
     {
-      id: 3,
+      id: 2,
       name: "Ana P.",
       avatar: "https://i.pravatar.cc/150?img=5",
       comuna: "San Miguel",
@@ -48,6 +50,227 @@ export default function SearchListings() {
       responseTime: "Responde en 1 hora",
       services: ["Gatos", "Medicamentos", "Visitas"],
       cover: "https://images.unsplash.com/photo-1518791841217-8f162f1e1131?q=80&w=900&auto=format&fit=crop"
+    },
+    {
+      id: 3,
+      name: "Camila R.",
+      avatar: "https://i.pravatar.cc/150?img=47",
+      comuna: "Providencia",
+      rating: 4.8,
+      reviews: 31,
+      title: "Paseos largos y rutina activa",
+      description: "Ideal para perros con mucha energia. Envio rutas, fotos y reporte breve al terminar cada paseo.",
+      price: 14000,
+      featured: false,
+      verified: true,
+      repeatFamilies: 18,
+      responseTime: "Responde en 15 min",
+      services: ["Paseos", "Fotos diarias"],
+      cover: "https://images.unsplash.com/photo-1507146426996-ef05306b995a?q=80&w=900&auto=format&fit=crop"
+    },
+    {
+      id: 4,
+      name: "Diego M.",
+      avatar: "https://i.pravatar.cc/150?img=12",
+      comuna: "Ñuñoa",
+      rating: 4.9,
+      reviews: 19,
+      title: "Guarderia familiar con patio seguro",
+      description: "Casa tranquila, cupos reducidos y supervision constante para perros pequenos y medianos.",
+      price: 18000,
+      featured: true,
+      verified: true,
+      repeatFamilies: 11,
+      responseTime: "Responde en 35 min",
+      services: ["Alojamiento", "Paseos", "Casa con patio"],
+      cover: "https://images.unsplash.com/photo-1544568100-847a948585b9?q=80&w=900&auto=format&fit=crop"
+    },
+    {
+      id: 5,
+      name: "Sofía L.",
+      avatar: "https://i.pravatar.cc/150?img=32",
+      comuna: "Las Condes",
+      rating: 5.0,
+      reviews: 27,
+      title: "Cuidado premium para gatos indoor",
+      description: "Visitas a domicilio, limpieza de arenero, juegos suaves y actualizaciones por WhatsApp.",
+      price: 16000,
+      featured: true,
+      verified: true,
+      repeatFamilies: 16,
+      responseTime: "Responde en 25 min",
+      services: ["Gatos", "Visitas", "Fotos diarias"],
+      cover: "https://images.unsplash.com/photo-1573865526739-10659fec78a5?q=80&w=900&auto=format&fit=crop"
+    },
+    {
+      id: 6,
+      name: "Javiera T.",
+      avatar: "https://i.pravatar.cc/150?img=49",
+      comuna: "La Florida",
+      rating: 4.7,
+      reviews: 14,
+      title: "Alojamiento con familia perruna",
+      description: "Recibo un perro por vez para mantener un ambiente seguro, cercano y sin estres.",
+      price: 13000,
+      featured: false,
+      verified: true,
+      repeatFamilies: 7,
+      responseTime: "Responde en 45 min",
+      services: ["Alojamiento", "Fotos diarias"],
+      cover: "https://images.unsplash.com/photo-1560743641-3914f2c45636?q=80&w=900&auto=format&fit=crop"
+    },
+    {
+      id: 7,
+      name: "Felipe A.",
+      avatar: "https://i.pravatar.cc/150?img=53",
+      comuna: "Santiago",
+      rating: 4.8,
+      reviews: 22,
+      title: "Visitas a domicilio en horarios flexibles",
+      description: "Disponible temprano y tarde. Reviso comida, agua, medicamentos simples y compania.",
+      price: 12000,
+      featured: false,
+      verified: true,
+      repeatFamilies: 9,
+      responseTime: "Responde en 30 min",
+      services: ["Visitas", "Medicamentos", "Gatos"],
+      cover: "https://images.unsplash.com/photo-1537151625747-768eb6cf92b2?q=80&w=900&auto=format&fit=crop"
+    },
+    {
+      id: 8,
+      name: "Valentina C.",
+      avatar: "https://i.pravatar.cc/150?img=44",
+      comuna: "Macul",
+      rating: 4.9,
+      reviews: 17,
+      title: "Cuidado carinoso para perros senior",
+      description: "Experiencia con perros mayores, paseos cortos, paciencia y rutina de medicamentos.",
+      price: 17000,
+      featured: true,
+      verified: true,
+      repeatFamilies: 10,
+      responseTime: "Responde en 20 min",
+      services: ["Alojamiento", "Medicamentos", "Fotos diarias"],
+      cover: "https://images.unsplash.com/photo-1517849845537-4d257902454a?q=80&w=900&auto=format&fit=crop"
+    },
+    {
+      id: 9,
+      name: "Ignacio B.",
+      avatar: "https://i.pravatar.cc/150?img=59",
+      comuna: "La Reina",
+      rating: 4.6,
+      reviews: 12,
+      title: "Paseos tranquilos por plazas cercanas",
+      description: "Trabajo con perros timidos o ansiosos, sin grupos grandes y con avances graduales.",
+      price: 11000,
+      featured: false,
+      verified: true,
+      repeatFamilies: 5,
+      responseTime: "Responde en 1 hora",
+      services: ["Paseos", "Fotos diarias"],
+      cover: "https://images.unsplash.com/photo-1558788353-f76d92427f16?q=80&w=900&auto=format&fit=crop"
+    },
+    {
+      id: 10,
+      name: "Fernanda V.",
+      avatar: "https://i.pravatar.cc/150?img=26",
+      comuna: "San Joaquín",
+      rating: 4.8,
+      reviews: 16,
+      title: "Casa segura para estadias de noche",
+      description: "Ambiente familiar, patio cerrado y reportes diarios para que sepas como va todo.",
+      price: 14500,
+      featured: false,
+      verified: true,
+      repeatFamilies: 8,
+      responseTime: "Responde en 40 min",
+      services: ["Alojamiento", "Casa con patio", "Fotos diarias"],
+      cover: "https://images.unsplash.com/photo-1548199973-03cce0bbc87b?q=80&w=900&auto=format&fit=crop"
+    },
+    {
+      id: 11,
+      name: "Tomás S.",
+      avatar: "https://i.pravatar.cc/150?img=60",
+      comuna: "Vitacura",
+      rating: 5.0,
+      reviews: 9,
+      title: "Cuidado uno a uno para mascotas pequenas",
+      description: "Cupo unico, sin jaulas y con rutina adaptada a cada mascota.",
+      price: 19000,
+      featured: true,
+      verified: true,
+      repeatFamilies: 6,
+      responseTime: "Responde en 50 min",
+      services: ["Alojamiento", "Gatos", "Fotos diarias"],
+      cover: "https://images.unsplash.com/photo-1587300003388-59208cc962cb?q=80&w=900&auto=format&fit=crop"
+    },
+    {
+      id: 12,
+      name: "Paula N.",
+      avatar: "https://i.pravatar.cc/150?img=29",
+      comuna: "Maipú",
+      rating: 4.7,
+      reviews: 21,
+      title: "Acompanamiento diario y juegos",
+      description: "Me adapto a mascotas sociables, entrego fotos, videos cortos y horarios claros.",
+      price: 12500,
+      featured: false,
+      verified: true,
+      repeatFamilies: 13,
+      responseTime: "Responde en 25 min",
+      services: ["Visitas", "Paseos", "Fotos diarias"],
+      cover: "https://images.unsplash.com/photo-1541599540903-216a46ca1dc0?q=80&w=900&auto=format&fit=crop"
+    },
+    {
+      id: 13,
+      name: "Constanza G.",
+      avatar: "https://i.pravatar.cc/150?img=25",
+      comuna: "Peñalolén",
+      rating: 4.9,
+      reviews: 18,
+      title: "Experiencia con gatos y perros timidos",
+      description: "Cuidado respetuoso, tiempos de adaptacion y seguimiento cercano con fotos.",
+      price: 15500,
+      featured: false,
+      verified: true,
+      repeatFamilies: 9,
+      responseTime: "Responde en 30 min",
+      services: ["Gatos", "Alojamiento", "Visitas"],
+      cover: "https://images.unsplash.com/photo-1494256997604-768d1f608cac?q=80&w=900&auto=format&fit=crop"
+    },
+    {
+      id: 14,
+      name: "Rodrigo H.",
+      avatar: "https://i.pravatar.cc/150?img=65",
+      comuna: "Recoleta",
+      rating: 4.6,
+      reviews: 11,
+      title: "Paseador con horarios de oficina",
+      description: "Paseos de mediodia para perros que pasan muchas horas solos en casa.",
+      price: 10000,
+      featured: false,
+      verified: true,
+      repeatFamilies: 4,
+      responseTime: "Responde en 2 horas",
+      services: ["Paseos"],
+      cover: "https://images.unsplash.com/photo-1534361960057-19889db9621e?q=80&w=900&auto=format&fit=crop"
+    },
+    {
+      id: 15,
+      name: "Daniela Q.",
+      avatar: "https://i.pravatar.cc/150?img=20",
+      comuna: "San Miguel",
+      rating: 4.9,
+      reviews: 15,
+      title: "Visitas y alojamiento cerca del metro",
+      description: "Flexible para coordinar entregas, con experiencia en perros pequenos y gatos indoor.",
+      price: 13500,
+      featured: true,
+      verified: true,
+      repeatFamilies: 8,
+      responseTime: "Responde en 18 min",
+      services: ["Alojamiento", "Visitas", "Gatos"],
+      cover: "https://images.unsplash.com/photo-1517423440428-a5a00ad493e8?q=80&w=900&auto=format&fit=crop"
     }
   ]);
 
@@ -64,11 +287,20 @@ export default function SearchListings() {
 
   const suggestions = COMUNAS.filter(c => c.toLowerCase().includes(searchTerm.toLowerCase()));
 
-  const filteredListings = listings.filter(listing => 
-    (searchTerm === '' || listing.comuna.toLowerCase().includes(searchTerm.toLowerCase())) &&
-    (service === 'Todos los servicios' || listing.services.includes(service))
+  const serviceListings = listings.filter(listing =>
+    service === 'Todos los servicios' || listing.services.includes(service)
   );
-  const visibleListings = filteredListings.length > 0 ? filteredListings : listings;
+  const hasLocationMatches = !searchTerm || serviceListings.some(listing =>
+    listing.comuna.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+  const visibleListings = [...serviceListings].sort((a, b) => {
+    const aMatches = searchTerm && a.comuna.toLowerCase().includes(searchTerm.toLowerCase());
+    const bMatches = searchTerm && b.comuna.toLowerCase().includes(searchTerm.toLowerCase());
+
+    if (aMatches !== bMatches) return aMatches ? -1 : 1;
+    if (a.featured !== b.featured) return a.featured ? -1 : 1;
+    return b.rating - a.rating;
+  });
 
   const handleSuggestionClick = (comuna) => {
     setSearchTerm(comuna);
@@ -195,7 +427,7 @@ export default function SearchListings() {
               <span className="text-sm font-semibold text-gray-600">{visibleListings.length} resultados</span>
             </div>
 
-            {filteredListings.length === 0 && searchTerm && (
+            {!hasLocationMatches && searchTerm && (
               <div className="bg-amber-50 border border-amber-200 text-amber-900 p-4 rounded-xl mb-6">
                 <h3 className="font-bold flex items-center gap-2"><MapPin size={18} /> No encontramos cuidadores en "{searchTerm}"</h3>
                 <p className="text-sm mt-1">Te mostramos alternativas destacadas mientras ampliamos cobertura en esa comuna.</p>
