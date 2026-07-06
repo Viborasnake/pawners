@@ -1,10 +1,12 @@
 import { useState, useRef, useEffect } from 'react';
-import { Award, CheckCircle2, Clock, Filter, Heart, MapPin, Search, ShieldCheck, SlidersHorizontal, Star } from 'lucide-react';
+import { Award, CheckCircle2, Clock, Filter, Heart, LoaderCircle, MapPin, Search, ShieldCheck, SlidersHorizontal, Star } from 'lucide-react';
 import { useSearchParams, Link } from 'react-router-dom';
 
 export default function SearchListings() {
   const [searchParams] = useSearchParams();
   const [searchTerm, setSearchTerm] = useState(searchParams.get('q') || '');
+  const [appliedSearchTerm, setAppliedSearchTerm] = useState(searchParams.get('q') || '');
+  const [isSearching, setIsSearching] = useState(false);
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [service, setService] = useState('Todos los servicios');
   const [quickFilters, setQuickFilters] = useState({
@@ -15,6 +17,7 @@ export default function SearchListings() {
   const [maxPrice, setMaxPrice] = useState(20000);
   const [minRating, setMinRating] = useState(0);
   const wrapperRef = useRef(null);
+  const searchTimerRef = useRef(null);
 
   const COMUNAS = [
     'Santiago', 'Providencia', 'Ñuñoa', 'Las Condes', 'San Miguel', 'Viña del Mar',
@@ -292,6 +295,14 @@ export default function SearchListings() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  useEffect(() => {
+    return () => {
+      if (searchTimerRef.current) {
+        clearTimeout(searchTimerRef.current);
+      }
+    };
+  }, []);
+
   const suggestions = COMUNAS.filter(c => c.toLowerCase().includes(searchTerm.toLowerCase()));
   const availableTodayIds = [1, 2, 4, 5, 7, 8, 10, 12, 15];
   const activeFilterCount = Object.values(quickFilters).filter(Boolean).length
@@ -331,21 +342,35 @@ export default function SearchListings() {
       && (!quickFilters.patio || hasPatio)
       && (!quickFilters.featured || listing.featured);
   });
-  const hasLocationMatches = !searchTerm || filteredListings.some(listing =>
-    listing.comuna.toLowerCase().includes(searchTerm.toLowerCase())
+  const hasLocationMatches = !appliedSearchTerm || filteredListings.some(listing =>
+    listing.comuna.toLowerCase().includes(appliedSearchTerm.toLowerCase())
   );
   const visibleListings = [...filteredListings].sort((a, b) => {
-    const aMatches = searchTerm && a.comuna.toLowerCase().includes(searchTerm.toLowerCase());
-    const bMatches = searchTerm && b.comuna.toLowerCase().includes(searchTerm.toLowerCase());
+    const aMatches = appliedSearchTerm && a.comuna.toLowerCase().includes(appliedSearchTerm.toLowerCase());
+    const bMatches = appliedSearchTerm && b.comuna.toLowerCase().includes(appliedSearchTerm.toLowerCase());
 
     if (aMatches !== bMatches) return aMatches ? -1 : 1;
     if (a.featured !== b.featured) return a.featured ? -1 : 1;
     return b.rating - a.rating;
   });
 
+  const runSearch = (term = searchTerm) => {
+    if (searchTimerRef.current) {
+      clearTimeout(searchTimerRef.current);
+    }
+
+    setShowSuggestions(false);
+    setIsSearching(true);
+
+    searchTimerRef.current = setTimeout(() => {
+      setAppliedSearchTerm(term.trim());
+      setIsSearching(false);
+    }, 650);
+  };
+
   const handleSuggestionClick = (comuna) => {
     setSearchTerm(comuna);
-    setShowSuggestions(false);
+    runSearch(comuna);
   };
 
   return (
@@ -412,9 +437,28 @@ export default function SearchListings() {
                 </select>
               </div>
 
-              <button className="h-12 rounded-xl bg-primary px-5 text-sm font-bold text-white shadow-sm shadow-primary/20 transition hover:bg-primary-dark flex items-center justify-center gap-2">
-                <Search size={18} /> Buscar
+              <button
+                type="button"
+                onClick={() => runSearch()}
+                disabled={isSearching}
+                className="h-12 rounded-xl bg-primary px-5 text-sm font-bold text-white shadow-sm shadow-primary/20 transition hover:bg-primary-dark disabled:cursor-wait disabled:bg-primary-dark flex items-center justify-center gap-2"
+              >
+                {isSearching ? <LoaderCircle size={18} className="animate-spin" /> : <Search size={18} />}
+                {isSearching ? 'Buscando...' : 'Buscar'}
               </button>
+                </div>
+
+                <div className="mt-3 min-h-6">
+                  {isSearching ? (
+                    <p className="inline-flex items-center gap-2 rounded-full bg-primary-light px-3 py-1.5 text-xs font-bold text-primary-dark">
+                      <LoaderCircle size={13} className="animate-spin" />
+                      Buscando cuidadores{searchTerm ? ` en ${searchTerm}` : ''}...
+                    </p>
+                  ) : appliedSearchTerm ? (
+                    <p className="text-xs font-semibold text-gray-500">
+                      Resultados actualizados para <span className="text-gray-900">{appliedSearchTerm}</span>
+                    </p>
+                  ) : null}
                 </div>
 
                 <div className="mt-3 flex flex-wrap gap-2 text-xs text-gray-600">
@@ -541,12 +585,12 @@ export default function SearchListings() {
                 <h2 className="text-2xl font-bold text-gray-950">Cuidadores destacados cerca de ti</h2>
                 <p className="text-sm text-gray-500 mt-1">Ordenados por reputación, respuesta y coincidencia con tu búsqueda.</p>
               </div>
-              <span className="text-sm font-semibold text-gray-600">{visibleListings.length} resultados</span>
+              <span className="text-sm font-semibold text-gray-600">{isSearching ? 'Actualizando...' : `${visibleListings.length} resultados`}</span>
             </div>
 
-            {!hasLocationMatches && searchTerm && (
+            {!hasLocationMatches && appliedSearchTerm && !isSearching && (
               <div className="bg-amber-50 border border-amber-200 text-amber-900 p-4 rounded-xl mb-6">
-                <h3 className="font-bold flex items-center gap-2"><MapPin size={18} /> No encontramos cuidadores en "{searchTerm}"</h3>
+                <h3 className="font-bold flex items-center gap-2"><MapPin size={18} /> No encontramos cuidadores en "{appliedSearchTerm}"</h3>
                 <p className="text-sm mt-1">Te mostramos alternativas destacadas mientras ampliamos cobertura en esa comuna.</p>
               </div>
             )}
@@ -566,7 +610,34 @@ export default function SearchListings() {
             )}
 
             <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-5">
-              {visibleListings.map(listing => (
+              {isSearching && Array.from({ length: 6 }).map((_, index) => (
+                <article key={`skeleton-${index}`} className="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm">
+                  <div className="h-44 animate-pulse bg-gray-200" />
+                  <div className="relative p-5">
+                    <div className="absolute -top-8 left-5 h-16 w-16 animate-pulse rounded-2xl border-4 border-white bg-gray-200 shadow-md" />
+                    <div className="mt-7 flex items-start justify-between gap-3">
+                      <div className="space-y-2">
+                        <div className="h-5 w-24 animate-pulse rounded-full bg-gray-200" />
+                        <div className="h-4 w-32 animate-pulse rounded-full bg-gray-100" />
+                      </div>
+                      <div className="h-7 w-20 animate-pulse rounded-full bg-amber-100" />
+                    </div>
+                    <div className="mt-5 h-4 w-4/5 animate-pulse rounded-full bg-gray-200" />
+                    <div className="mt-3 h-4 w-full animate-pulse rounded-full bg-gray-100" />
+                    <div className="mt-2 h-4 w-2/3 animate-pulse rounded-full bg-gray-100" />
+                    <div className="mt-5 flex gap-2">
+                      <div className="h-6 w-20 animate-pulse rounded-full bg-gray-100" />
+                      <div className="h-6 w-24 animate-pulse rounded-full bg-gray-100" />
+                    </div>
+                    <div className="mt-5 flex items-center justify-between border-t border-gray-100 pt-4">
+                      <div className="h-6 w-24 animate-pulse rounded-full bg-primary-light" />
+                      <div className="h-9 w-20 animate-pulse rounded-lg bg-gray-200" />
+                    </div>
+                  </div>
+                </article>
+              ))}
+
+              {!isSearching && visibleListings.map(listing => (
                 <article key={listing.id} className="group bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden hover:-translate-y-0.5 hover:shadow-lg transition-all">
                   <div className="h-44 bg-gray-200 relative overflow-hidden">
                     <img src={listing.cover} alt={`Mascota cuidada por ${listing.name}`} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
