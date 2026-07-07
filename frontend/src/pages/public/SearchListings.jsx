@@ -658,63 +658,61 @@ export default function SearchListings() {
                     </span>
                   </div>
 
-                  <div className="grid gap-5 xl:grid-cols-2">
+                  <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
                     {featuredListings.map((listing) => (
-                      <article key={`featured-${listing.id}`} className="group overflow-hidden rounded-2xl border-2 border-amber-200 bg-white shadow-sm shadow-amber-100 transition-all hover:-translate-y-0.5 hover:shadow-lg">
-                        <div className="grid min-h-[250px] md:grid-cols-[minmax(210px,0.85fr)_1fr]">
-                          <div className="relative min-h-56 overflow-hidden bg-gray-200">
-                            <img src={listing.cover} alt={`Mascota cuidada por ${listing.name}`} className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" />
-                            <div className="absolute inset-x-0 top-0 flex items-start justify-between p-3">
-                              <span className="inline-flex items-center gap-1 rounded-full bg-accent px-3 py-1.5 text-xs font-bold text-white shadow">
-                                <Award size={14} /> Destacado
-                              </span>
-                              <button className="h-9 w-9 rounded-full bg-white/90 text-gray-500 shadow-sm transition hover:text-red-500" aria-label="Guardar favorito">
-                                <Heart size={18} className="mx-auto" />
-                              </button>
+                      <article key={`featured-${listing.id}`} className="group overflow-hidden rounded-2xl border-2 border-amber-200 bg-gradient-to-b from-amber-50/70 to-white shadow-sm shadow-amber-100 transition-all hover:-translate-y-0.5 hover:shadow-lg">
+                        <div className="h-1.5 bg-accent" />
+                        <div className="relative h-48 overflow-hidden bg-gray-200">
+                          <img src={listing.cover} alt={`Mascota cuidada por ${listing.name}`} className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" />
+                          <div className="absolute inset-x-0 top-0 flex items-start justify-between p-3">
+                            <span className="inline-flex items-center gap-1 rounded-full bg-accent px-3 py-1.5 text-xs font-bold text-white shadow">
+                              <Award size={14} /> Destacado
+                            </span>
+                            <button className="h-9 w-9 rounded-full bg-white/90 text-gray-500 shadow-sm transition hover:text-red-500" aria-label="Guardar favorito">
+                              <Heart size={18} className="mx-auto" />
+                            </button>
+                          </div>
+                        </div>
+
+                        <div className="relative p-5">
+                          <img
+                            src={listing.avatar}
+                            alt={listing.name}
+                            className="absolute -top-8 left-5 h-16 w-16 rounded-2xl border-4 border-white bg-white object-cover shadow-md"
+                          />
+
+                          <div className="mt-7 flex items-start justify-between gap-3">
+                            <div className="min-w-0">
+                              <h3 className="truncate text-lg font-bold text-gray-950">{listing.name}</h3>
+                              <div className="mt-1 flex items-center gap-1.5 text-sm text-gray-500">
+                                <MapPin size={14} /> {listing.comuna}
+                              </div>
+                            </div>
+                            <div className="shrink-0 rounded-full bg-amber-50 px-2.5 py-1 text-sm font-bold text-gray-800 flex items-center gap-1">
+                              <Star size={15} className="text-accent fill-accent" />
+                              {listing.rating} <span className="font-medium text-gray-500">({listing.reviews})</span>
                             </div>
                           </div>
 
-                          <div className="relative flex flex-col p-5">
-                            <img
-                              src={listing.avatar}
-                              alt={listing.name}
-                              className="-mt-12 h-20 w-20 rounded-2xl border-4 border-white bg-white object-cover shadow-md md:absolute md:left-5 md:top-5 md:mt-0"
-                            />
-                            <div className="md:pl-24">
-                              <div className="flex items-start justify-between gap-3">
-                                <div>
-                                  <h3 className="text-xl font-bold text-gray-950">{listing.name}</h3>
-                                  <div className="mt-1 flex items-center gap-1.5 text-sm text-gray-500">
-                                    <MapPin size={14} /> {listing.comuna}
-                                  </div>
-                                </div>
-                                <div className="shrink-0 rounded-full bg-amber-50 px-2.5 py-1 text-sm font-bold text-gray-800 flex items-center gap-1">
-                                  <Star size={15} className="text-accent fill-accent" />
-                                  {listing.rating} <span className="font-medium text-gray-500">({listing.reviews})</span>
-                                </div>
-                              </div>
-                            </div>
+                          <p className="mt-4 line-clamp-2 font-bold text-gray-950">{listing.title}</p>
+                          <p className="mt-2 line-clamp-2 text-sm leading-relaxed text-gray-600">{listing.description}</p>
 
-                            <p className="mt-5 font-bold text-gray-950 md:mt-6">{listing.title}</p>
-                            <p className="mt-2 text-sm leading-relaxed text-gray-600 line-clamp-2">{listing.description}</p>
+                          <div className="mt-4 flex flex-wrap gap-2">
+                            {listing.services.slice(0, 3).map(item => (
+                              <span key={item} className="rounded-full bg-amber-50 px-2.5 py-1 text-xs font-semibold text-amber-800">{item}</span>
+                            ))}
+                          </div>
 
-                            <div className="mt-4 flex flex-wrap gap-2">
-                              {listing.services.map(item => (
-                                <span key={item} className="rounded-full bg-amber-50 px-2.5 py-1 text-xs font-semibold text-amber-800">{item}</span>
-                              ))}
-                            </div>
+                          <div className="mt-5 grid grid-cols-2 gap-2 text-xs text-gray-600">
+                            <span className="flex items-center gap-1.5"><CheckCircle2 size={14} className="text-primary-dark" /> Verificado</span>
+                            <span className="flex items-center gap-1.5"><Clock size={14} className="text-primary-dark" /> {listing.responseTime}</span>
+                          </div>
 
-                            <div className="mt-5 grid grid-cols-2 gap-2 text-xs text-gray-600">
-                              <span className="flex items-center gap-1.5"><CheckCircle2 size={14} className="text-primary-dark" /> Verificado</span>
-                              <span className="flex items-center gap-1.5"><Clock size={14} className="text-primary-dark" /> {listing.responseTime}</span>
-                            </div>
-
-                            <div className="mt-auto flex items-center justify-between border-t border-gray-100 pt-4">
-                              <p className="font-bold text-xl text-primary-dark">${listing.price.toLocaleString('es-CL')} <span className="text-xs text-gray-500 font-normal">/ noche</span></p>
-                              <Link to="/checkout/reserva" className="rounded-lg bg-gray-950 px-3.5 py-2 text-sm font-bold text-white transition hover:bg-primary-dark">
-                                Ver perfil
-                              </Link>
-                            </div>
+                          <div className="mt-5 flex items-center justify-between border-t border-amber-100 pt-4">
+                            <p className="font-bold text-xl text-primary-dark">${listing.price.toLocaleString('es-CL')} <span className="text-xs text-gray-500 font-normal">/ noche</span></p>
+                            <Link to="/checkout/reserva" className="rounded-lg bg-gray-950 px-3.5 py-2 text-sm font-bold text-white transition hover:bg-primary-dark">
+                              Ver perfil
+                            </Link>
                           </div>
                         </div>
                       </article>
